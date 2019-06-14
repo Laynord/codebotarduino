@@ -1,0 +1,347 @@
+/*$$$$$$$$$$$$$$$$$$$$$Projet SIN$$$$$$$$$$$$$$$$$*
+ *$$$$$$$$$$$$$$$$$ALEXANDRE GUIGNARD$$$$$$$$$$$$$*
+ *$$$$$$$$$$$$$$$$$$$$$$$$TT4$$$$$$$$$$$$$$$$$$$$$*/
+ 
+ #include <Shieldbot.h>
+Shieldbot shieldbot = Shieldbot();
+int Varfinback1 =0;
+int tempposneg1 =127;
+int tempposneg2 =-127;//de base tour a droite
+int Varfin1=0;
+int Varfin2=0;
+int obs =0;
+double a = 150 ;
+double b = 150 ;
+double c = 0;
+double d =0 ;
+double Xa =0;
+double Xb =0;
+long pi = 3.14159265359 ;
+int perim = 4.4*pi ;
+int pasgauche ;
+int pasdroit ;
+int pasdbuff ;
+int pasgbuff ;
+int pasgauchereel ;
+int pasdroitreel ;
+int toursgauche ;
+int toursdroit;
+int vgauche = 120 ;
+double longgauche = 0 ;
+double longdroite = 0 ;
+int vdroite = 150 ;
+boolean startstopbot =1 ;
+  int Vg = 140;// 140 t.mn-1
+  int Vd = 140;// 140 t.mn-1
+  int V =140;// 140 t.mn-1
+  int teta = 0;//angle des roues
+  int X=0;
+  int Y=0;
+  
+void setup(){
+  toursdroit = 0;
+  toursgauche = 0;
+  Serial.begin(9600);
+  shieldbot.setMaxLeftSpeed(vgauche);//140 t/mn environ
+  shieldbot.setMaxRightSpeed(vdroite);//140t/mn environ
+  c=a;
+  d=b;
+  pinMode(A5,INPUT_PULLUP);
+  pinMode(A4,INPUT_PULLUP); 
+}
+
+void loop(){
+
+  check_pas ();
+  if (startstopbot == 1){
+  loopdrive(100,100);
+  tempposneg1=-tempposneg1;
+  tempposneg2=-tempposneg2;
+  
+
+  }
+  
+  
+}
+
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+
+void loopdrive(int Xbut,int Ybut){
+float bootmoove = 1;
+float tempgauchmoov;
+float tempdroitemoov;
+float varmoovech = 10 ;
+float varmoove2ch = 5 ;
+float varmoove3ch = 15 ;
+int varchk = 75 ;
+
+    check_pas();
+
+if (obs != 1) 
+  {
+    //__________________________________________________________________________
+    if (Ybut>Y)
+    {
+      if (bootmoove==-1){
+        shieldbot.drive(-127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a gauche
+      check_pas ();
+    }
+    shieldbot.stop();
+      }
+      while (Y>Ybut){
+        shieldbot.drive(-127,-127);
+        check_pas();
+        Varfinback1++;          
+      }
+      shieldbot.stop();
+    }
+//__________________________________________________________________________
+    if (Ybut>Y)
+    {
+    check_pas();
+    shieldbot.drive(127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+5>longgauche){//pas pour 5 cm 
+      check_pas ();
+    }
+        delay(100);
+    if (varchk == 75)
+    { 
+      Y=Y+5;
+    }
+    if (varchk == -75)
+    { 
+      X=X+5; 
+    }
+    shieldbot.stop();
+    Serial.println ("Utiles ");
+    Serial.print (tempposneg1) ;
+    Serial.print (tempposneg2) ; 
+    shieldbot.drive(tempposneg1 , tempposneg2);
+    tempgauchmoov = longgauche ;
+
+        while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a gauche
+      check_pas ();
+    
+   }
+    shieldbot.stop();
+
+    shieldbot.stop();
+
+    check_pas();
+    delay(100);
+}
+
+    
+    
+//__________________________________________________________________________
+    if ( Ybut==Y){
+      if (bootmoove==-1){
+        if (X<Xbut){
+          while (X<Xbut){
+               shieldbot.drive(127,127);
+               Varfin1++;
+          }
+              shieldbot.stop();
+              startstopbot=0;
+        }
+        if (X>Xbut){
+          shieldbot.drive(-127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+12>longgauche){//pas pour tourner a 180Â° a gauche
+      check_pas ();
+    }
+   shieldbot.stop();
+          while (X>Xbut){
+               shieldbot.drive(127,127);
+               Varfin2++;
+          }
+          shieldbot.stop();
+          startstopbot=0;
+        }
+        
+      }
+//__________________________________________________________________________
+      
+      if (bootmoove==1){
+        if (X<Xbut){
+          shieldbot.drive(127,-127);
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a droite
+      check_pas ();
+    }
+    shieldbot.stop();
+          while (Y<Ybut){
+               shieldbot.drive(127,127);
+          }
+          shieldbot.stop();
+        }
+        if (X>Xbut){
+          
+          shieldbot.drive(-127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a gauche
+      check_pas ();
+    }
+    shieldbot.stop();
+          while (Y>Ybut){
+               shieldbot.drive(127,127);
+          }
+               shieldbot.stop();
+        }
+      }
+    } 
+ }
+//__________________________________________________________________________
+    if (obs == 1) {
+          if ( X>=270)
+          {
+          shieldbot.drive(-127,-127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+10>longgauche){// pas pour reculer de 10 cm
+      check_pas ();
+     
+    }          
+          Y=Y-10;
+          shieldbot.stop();
+          shieldbot.drive(-127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a gauche
+      check_pas ();
+    }
+    shieldbot.stop();
+          shieldbot.drive(127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+15>longgauche){//pas pour avancer 15 cm
+      check_pas ();
+    }
+    X=X-15;
+          shieldbot.stop();
+          shieldbot.drive(127,-127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a droite
+      check_pas ();
+    }
+    shieldbot.stop();
+          shieldbot.drive(127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+10>longgauche){//pas pour avancer 10 cm
+      check_pas ();
+    }
+    Y=Y+10;
+    shieldbot.stop();
+          }
+          if ( X<=30)
+          {
+          shieldbot.drive(-127,-127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+10>longgauche){//pas pour avancer 10 cm
+      check_pas ();
+    }
+    Y=Y-10;
+          shieldbot.stop();
+          shieldbot.drive(127,-127);
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a droite
+      check_pas ();
+    }
+    
+    shieldbot.stop();
+          shieldbot.drive(127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+15>longgauche){//pas pour avancer 15 cm
+      check_pas ();
+    }
+    X=X+15;
+    shieldbot.stop();
+          shieldbot.drive(-127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+6>longgauche){//pas pour tourner a 90Â° a gauche
+      check_pas ();
+    }
+    shieldbot.stop();
+          shieldbot.drive(127,127);
+    tempgauchmoov = longgauche ;
+    while ( tempgauchmoov+10>longgauche){//pas pour avancer 10 cm
+      check_pas ();
+    }
+    Y=Y+10;
+    shieldbot.stop();
+        check_pas();
+          }
+  }
+    check_pas();
+
+  
+
+}
+
+
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+void check_pas (){//fonctionne
+pasgauche = analogRead(A4);
+pasdroit = analogRead(A5);
+if( pasgauche > 300 ){
+  pasgbuff ++; 
+}
+if( pasgauche < 200 ){
+  if(pasgbuff>0){
+    pasgbuff=0;
+    pasgauchereel++;
+  longgauche=longgauche+perim/6;
+  Serial.print("Distance rg = ");
+  Serial.print(longgauche);
+  Serial.println(" cm");
+
+}
+}
+if (pasgauchereel>=6){
+  toursgauche++;
+  Serial.print("tours roue gauche : ");
+  Serial.println(toursgauche);
+  pasgauchereel=0;
+  if(Varfin1!=0 ){
+    X=X+6;
+  }
+    if(Varfin2!=0 ){
+    X=X-6;
+  }
+  if(Varfinback1!=0 ){
+    X=X-6;
+  }
+}
+
+if( pasdroit > 300 ){
+  pasdbuff ++; 
+}
+if( pasdroit < 200 ){
+  if(pasdbuff>0){
+    pasdbuff=0;
+    pasdroitreel++;
+      longdroite=longdroite+perim/6;
+  Serial.print("Distance rd = ");
+  Serial.print(longdroite);
+  Serial.println(" cm");
+  }
+}
+if (pasdroitreel>=6){
+  toursdroit++;
+  Serial.print("tours roue droite : ");
+  Serial.println(toursdroit);
+  pasdroitreel=0;
+
+
+}
+}
+
+
+
